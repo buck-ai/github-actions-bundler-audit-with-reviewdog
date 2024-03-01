@@ -15,16 +15,18 @@ CRITICALITY_MAPPING = {
 
 SEVERITIES = %w[INFO WARNING ERROR].freeze
 
-input   = JSON.parse(gets)
-results = input['results']
+piped_json = STDIN.each_line.to_a.join
+json_input = JSON.parse(piped_json)
+results    = json_input['results']
 
 def result_formatter(result)
     advisory = result['advisory']
     gem      = result['gem']
-    message  = <<-MARKDOWN
-    #{gem['name']} has #{advisory['title']} on (#{gem['version']}). 
-    You can bump #{gem['name']} version from #{gem['version']} to #{advisory['patched_versions'].join(', ')}
-    MARKDOWN
+    line     = `grep -n -E '^#{gem['name']}\s\(#{gem['version']}\)' #{GEMFILE_LOCK_PATH} | cut -d : -f 1`.to_i
+    message  = [
+        "#{gem['name']} has #{advisory['title']} on #{gem['version']} version.",
+        "You can bump #{gem['name']} version from #{gem['version']} to #{advisory['patched_versions'].join(', ')}"
+    ].join(' ')
 
     {
         message: message, 
@@ -39,13 +41,14 @@ def result_formatter(result)
         },
         severity: SEVERITIES[CRITICALITY_MAPPING[advisory['criticality']]],
         code: {
-            value: advisory['id']
+            value: advisory['id'],
             url: advisory['url']
         }
     }
 end
 
-max_criticality_score = results.max_by { |result| result.dig('advisory', 'criticality') }
+binding.irb
+max_criticality_score = results.map { |result| CRITICALITY_MAPPING[result.dig('advisory', 'criticality')] }.max
 max_severity          = SEVERITIES[max_criticality_score]
 
 output  = {
