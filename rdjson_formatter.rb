@@ -47,7 +47,6 @@ def result_formatter(result)
     }
 end
 
-binding.irb
 max_criticality_score = results.map { |result| CRITICALITY_MAPPING[result.dig('advisory', 'criticality')] }.max
 max_severity          = SEVERITIES[max_criticality_score]
 
