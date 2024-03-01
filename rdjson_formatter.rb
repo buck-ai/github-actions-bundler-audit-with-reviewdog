@@ -15,7 +15,7 @@ CRITICALITY_MAPPING = {
 
 SEVERITIES = %w[INFO WARNING ERROR].freeze
 
-piped_json = STDIN.each_line.to_a.join
+piped_json = STDIN.each_line.to_a.last
 json_input = JSON.parse(piped_json)
 results    = json_input['results']
 
