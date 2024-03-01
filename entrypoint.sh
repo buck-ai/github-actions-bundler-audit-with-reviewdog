@@ -2,6 +2,8 @@
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
+cd $GITHUB_ACTION_PATH
+
 echo "::group:: Installing bundler-audit"
 
 gem install -N bundler-audit
