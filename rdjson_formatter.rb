@@ -2,7 +2,7 @@
 
 require 'json'
 
-GEMFILE_LOCK_PATH = "Gemfile.lock"
+GEMFILE_LOCK_PATH = "#{ENV['GITHUB_WORKSPACE']}/Gemfile.lock"
 
 CRITICALITY_MAPPING = {
     nil        => 0,
