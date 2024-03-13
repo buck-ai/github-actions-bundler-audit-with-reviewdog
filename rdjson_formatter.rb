@@ -7,13 +7,13 @@ GEMFILE_LOCK_PATH = "#{ENV['GITHUB_WORKSPACE']}/Gemfile.lock"
 CRITICALITY_MAPPING = {
     nil        => 0,
     'none'     => 0,
-    'low'      => 0,
-    'medium'   => 1,
-    'high'     => 2,
-    'critical' => 2
+    'low'      => 1,
+    'medium'   => 2,
+    'high'     => 3,
+    'critical' => 3
 }.freeze
 
-SEVERITIES = %w[INFO WARNING ERROR].freeze
+SEVERITIES = %w[UNKNOWN_SEVERITY INFO WARNING ERROR].freeze
 
 piped_json = STDIN.each_line.to_a.last
 json_input = JSON.parse(piped_json)
@@ -47,7 +47,7 @@ def result_formatter(result)
     }
 end
 
-max_criticality_score = results.map { |result| CRITICALITY_MAPPING[result.dig('advisory', 'criticality')] }.max
+max_criticality_score = results.map { |result| CRITICALITY_MAPPING[result.dig('advisory', 'criticality')] }.max || 0
 max_severity          = SEVERITIES[max_criticality_score]
 
 output  = {
